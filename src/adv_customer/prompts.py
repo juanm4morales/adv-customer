@@ -33,7 +33,6 @@ CUSTOMER_INFO_PROMPT_1 = """
     La respuesta debe contener únicamente los nombres de estos atributos generales, uno por línea, sin descripciones adicionales.
 """
 
-# + ROLE
 CUSTOMER_INFO_PROMPT_2 = """
     Eres un analizador de prompts especializado en extraer la información esencial que un cliente debe suministrar para iniciar una conversación efectiva con un bot asistente.
 
@@ -73,7 +72,6 @@ CUSTOMER_INFO_PROMPT_3 = """
     - La salida debe ser únicamente una lista de nombres de atributos, clara y concisa.
 """
 
-
 CUSTOMER_INFO_PROMPT_5 = """
     Tu tarea es generar una lista concisa de atributos esenciales que un cliente debe proporcionar para que un bot asistente, descrito en el siguiente prompt, pueda iniciar su función correctamente:
 
@@ -92,7 +90,6 @@ CUSTOMER_INFO_PROMPT_5 = """
     - Si el agente puede iniciar su tarea con solo uno o dos atributos, incluye únicamente esos. No infieras requisitos adicionales no explícitamente necesarios.
 """
 
-
 CUSTOMER_INFO_PROMPT_7 = """
 Tu tarea es generar una lista concisa de atributos esenciales que un cliente debe proporcionar para que un bot asistente, descrito en el siguiente prompt, pueda iniciar su función correctamente:
 
@@ -105,9 +102,10 @@ Ahora, sigue rigurosamente el siguiente razonamiento paso a paso (Chain-of-Thoug
 3. Aplica estos filtros estrictos para definir los nombres de atributos:
    - No incluyas un atributo, por el solo hecho de ser mencionado en un caso específico, reglas condicionales o ejemplos del prompt del agente.
    - Considera exclusivamente atributos que serían válidos incluso si el bot no tuviera reglas específicas ni lógica interna detallada.
-   
+
 Caso específico para bots de asistencia en ventas de productos:
-- Usar este atributo 'producto_deseado'. Este debe encapsular toda la intención del cliente respecto al producto de interés. No debe desglosarse en especificaciones técnicas, aunque estas aparezcan en ejemplos del prompt.
+- El atributo 'producto_deseado' es el único permitido para capturar la intención de compra.
+- Cualquier especificación técnica o característica del producto NUNCA debe extraerse como atributo separado.
 """
 
 CUSTOMER_INFO_PROMPT_9 = """
@@ -168,7 +166,7 @@ CUSTOMER_SIM_PROMPT_2 = """
 """
 
 CUSTOMER_SIM_PROMPT_3 = """
-    Eres un cliente diseñado para conversar con un asistente chatbot. Tu nombre es {NAME} y tus datos de cliente son:
+    Eres un cliente diseñado para conversar con un asistente chatbot. Tus información de cliente es:
     {CUSTOMER_INFO}
 
     Tu perfil de interacción es el siguiente:
@@ -209,7 +207,7 @@ customer_attributes = {
     ],
     
     "Estilo de comunicación": [
-        "Directo (va al punto sin desvíos innecesarios, pero con cortesía)",
+        "Directo (va al punto sin desvíos innecesarios)",
         "Conciso (preciso, claro, evita repeticiones o explicaciones redundantes)",
         "Explicativo (aporta contexto, ejemplos y aclaraciones útiles)"
     ],
