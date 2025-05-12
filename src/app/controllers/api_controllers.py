@@ -1,0 +1,64 @@
+from adv_customer.utils.bot_utils import fetch_bot_info, generate_customer_attr_names
+from adv_customer.customer_sim import ConversationSim
+from threading import Lock
+import uuid
+
+active_requests = {}
+lock = Lock()
+
+def is_request_active(user_id):
+    with lock:
+        return active_requests.get(user_id, False)
+
+def set_request_active(user_id, active):
+    with lock:
+        active_requests[user_id] = active
+
+def get_customer_attributes_controller(data):
+    bot_id = data.get('bot_id')
+    agent_id = int(data.get('agent_id'))
+
+    if not bot_id or not agent_id:
+        return {"error": "bot_id y agent_id son requeridos"}, 400
+
+    bot_info = fetch_bot_info(bot_id)
+    agent_info = next((agent for agent in bot_info if agent['id'] == agent_id), None)
+    if not agent_info:
+        return {"error": "Agente no encontrado"}, 404
+
+    attributes = generate_customer_attr_names(agent_info["prompt_agent"]["prompt"])
+    return attributes
+
+def generate_conversation_controller(data, user_id):
+    if is_request_active(user_id):
+        return {"error": "Ya tienes una solicitud en proceso. Por favor, espera a que termine."}, 429
+
+    set_request_active(user_id, True)
+
+    try:
+        bot_id = data.get('bot_id')
+        agent_id = int(data.get('agent_id'))
+        customer_info = data.get('customer_info')
+
+        if not bot_id or not agent_id or not customer_info:
+            return {"error": "bot_id, agent_id y customer_info son requeridos"}, 400
+
+        if not isinstance(customer_info, dict):
+            return {"error": "customer_info debe ser un diccionario"}, 400
+
+        bot_info = fetch_bot_info(bot_id)
+        agent_info = next((agent for agent in bot_info if agent['id'] == agent_id), None)
+        if not agent_info:
+            return {"error": "Agente no encontrado"}, 404
+
+        customerSim = ConversationSim(
+            customer_id=str(uuid.uuid4()),
+            customer_info=customer_info,
+            agent_info=agent_info,
+        )
+        messages = customerSim.simulate_conversation(verbose=True)
+        return messages
+    except Exception as e:
+        return {"error": str(e)}, 500
+    finally:
+        set_request_active(user_id, False)

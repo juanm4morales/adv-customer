@@ -1,34 +1,30 @@
 import os
-import requests
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, StateGraph, START
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
-from states import State
-from nodes import CustomerNode, ChatbotNode, should_continue
+from .states import State
+from .nodes import CustomerNode, ChatbotNode, should_continue
 
-import prompts
-import schemes
-from utils.prompt_utils import safe_filter, random_customer_attributes
-from utils.persistence import persist_conversation
-from utils.bot_utils import fetch_bot_info, generate_customer_attr_names
+import adv_customer.utils.prompts as prompts
+from .schemes import ResponseFormatter
+from adv_customer.utils.prompt_utils import filter_prompt_variables, generate_random_customer_profile
+from adv_customer.utils.serializer import persist_conversation, serialize_messages
 
 load_dotenv()
 
 API_KEY = os.getenv("KLARI_API_KEY")
 
-class CustomerSim:
+class ConversationSim:
     """ 
     Class to simulate a customer agent that interacts with a chatbot.
     This class is designed to generate realistic customer interactions based on the chatbot's capabilities and the customer's profile.
     """
-
-    def __init__(self, customer_id: str, customer_info: dict, agent_info:dict):
+    def __init__(self, customer_id: str, customer_info: dict, agent_info:dict, max_messages:int = 30):
         self.customer_id = customer_id
-        self.customer_profile = random_customer_attributes()
-        
+        self.customer_profile = generate_random_customer_profile()
         try:
             self.agent_id = agent_info["id"]
             self.bot_id = agent_info["bot_id"]
@@ -38,6 +34,7 @@ class CustomerSim:
             raise KeyError(f"Missing expected key in agent_info: {e}") from e
         self.customer_info = customer_info
         self.customer_prompt = self._generate_prompt(agent_role)
+        self.max_messages = max_messages
         self.graph = self._graph_builder()
         self.config_checkpoint = {"configurable": {"thread_id": "1"}}
 
@@ -64,16 +61,6 @@ class CustomerSim:
             except ValueError:
                 print("Entrada inválida. Por favor intente nuevamente.")
 
-    def _generate_customer_info(self):
-        agent_prompt = self.agents_info[self.current_agent_id]["prompt"]
-        attr_names = generate_customer_attr_names(agent_prompt)
-        customer_info = {}
-        print("\nPor favor, ingrese los valores para los siguientes atributos del cliente:")
-        for attr_name in attr_names:
-            value = input(f" - {attr_name}: ")
-            customer_info[attr_name] = value
-        return customer_info
-
     def _generate_prompt(self, agent_role: str):
         """
         Generate the prompt for the customer agent based on the bot's capabilities and the customer's profile.
@@ -90,7 +77,7 @@ class CustomerSim:
             "ADV_AGENT_ROLE": agent_role,
             "CUSTOMER_PROFILE": self.customer_profile,
         }
-        variables = safe_filter(prompt_template, variables)
+        variables = filter_prompt_variables(prompt_template, variables)
         prompt = prompt_template.partial(**variables)
         return prompt
     
@@ -118,7 +105,7 @@ class CustomerSim:
         Build the state graph for the customer simulation.
         """
         llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0, max_tokens=2000)
-        llm = llm.with_structured_output(schemes.ResponseFormatter)
+        llm = llm.with_structured_output(ResponseFormatter)
         customer_sim_runnable = self.customer_prompt | llm
         # Graph
         builder = StateGraph(State)
@@ -127,31 +114,40 @@ class CustomerSim:
         builder.add_node(ChatbotNode.name, ChatbotNode(self.bot_id))
         # Edges
         builder.add_edge(START, CustomerNode.name)
-        builder.add_conditional_edges(CustomerNode.name, should_continue)
+        builder.add_conditional_edges(CustomerNode.name, lambda state: should_continue(state, self.max_messages))
         builder.add_edge(ChatbotNode.name, CustomerNode.name)
         checkpointer = InMemorySaver()
         graph = builder.compile(checkpointer=checkpointer)
         return graph
 
-    def simulate_conversation(self, initial_state=None):
+    def simulate_conversation(self, initial_state=None, verbose=False):
         """
-        Simula la conversación completa hasta que finalice.
+        Simulate a conversation with the chatbot.
+        This method initiates the conversation and streams the responses from the chatbot.
+
+        Args:
+            initial_state (dict, optional): Initial state for the conversation. Defaults to None.
+            verbose (bool, optional): If True, prints the conversation in real-time. Defaults to False.
         """
-        
         if initial_state is None:
             initial_state = {
                 "messages": [],
                 "closed": False,
             }
-        print("Iniciando simulación de CustomerSim...\n")
-        print("\n" + "="*70)
-        for chunk in self.graph.stream(initial_state, self.config_checkpoint, stream_mode="updates"):
-            if END not in chunk:
-                print(chunk)
-                print("\n" + "="*70)
-            else:
-                print("Fin de la conversación.")
-                break
+        state = None
+        if verbose:
+            print("Iniciando simulación de CustomerSim...\n")
+            for chunk in self.graph.stream(initial_state, self.config_checkpoint, stream_mode="values"):
+                if chunk.get("closed"):
+                    print("Fin de la conversación.")
+                    state = chunk
+                    break
+                if chunk.get("messages"):  # Check if the list is not empty
+                    last_message = chunk["messages"][-1]
+                    last_message.pretty_print()
+        else:
+            state = self.graph.invoke(initial_state, self.config_checkpoint)
+        return serialize_messages(state["messages"])
     
     def save_conversation(self, output_dir="conversations"):
         state = self.graph.get_state(self.config_checkpoint)

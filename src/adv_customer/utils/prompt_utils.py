@@ -1,7 +1,7 @@
 import random
-from prompts import customer_attributes
+from .prompts import customer_attributes
 
-def safe_filter(prompt_template, variables: dict):
+def filter_prompt_variables(prompt_template, variables: dict):
     """ 
     Filter the variables to only include those that are expected by the prompt template.
     Args:
@@ -13,7 +13,7 @@ def safe_filter(prompt_template, variables: dict):
     expected_vars = set(prompt_template.input_variables)
     return {k: v for k, v in variables.items() if k in expected_vars}
 
-def random_customer_attributes(seed: int = None):
+def generate_random_customer_profile(seed: int = None):
     """
     Generate a random customer profile based on predefined attributes.
     Args:
@@ -28,5 +28,3 @@ def random_customer_attributes(seed: int = None):
         attribute = random.choice(values)
         profile += f"{key}: {attribute}\n"
     return profile
-        
-    

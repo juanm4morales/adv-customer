@@ -1,6 +1,6 @@
 from langchain_core.runnables import Runnable
 from langchain_core.messages import AIMessage, HumanMessage
-from states import State
+from .states import State
 import requests
 import os
 
@@ -96,15 +96,18 @@ class ChatbotNode:
             raise RuntimeError(f"Request error: {request_error}") from request_error
         except ValueError as value_error:
             raise RuntimeError(f"Error processing the response: {value_error}") from value_error
-    
-MAX_MESSAGES_SIZE = 30
-def should_continue(state: State):
+
+def should_continue(state: State, max_messages_size: int = 30):
     """
     Conditional edge that determines whether to continue the conversation.
+
+    Args:
+        state (State): The current state of the conversation.
+        max_messages_size (int): The maximum number of messages allowed in the conversation.
     """
     messages = state["messages"]
     
-    if state["closed"] or len(messages) > MAX_MESSAGES_SIZE:
+    if state["closed"] or len(messages) > max_messages_size:
         # If the conversation is too long or solved, end the conversation
         return "end"
     

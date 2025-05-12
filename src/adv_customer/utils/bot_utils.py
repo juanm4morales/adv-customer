@@ -2,8 +2,8 @@ import os
 import requests
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-import prompts
-from schemes import CustomerAttributes
+import adv_customer.utils.prompts as prompts
+from adv_customer.schemes import CustomerAttributes
 
 load_dotenv()
 
@@ -22,7 +22,6 @@ def fetch_bot_info(bot_id: str):
         "accept": "application/json",
         "X-Api-Key": API_KEY
     }
-
     try:
         response = requests.get(url, headers=headers)
         response.raise_for_status()

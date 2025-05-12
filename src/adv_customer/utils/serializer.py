@@ -19,3 +19,21 @@ def persist_conversation(messages: List[Union[AIMessage, HumanMessage]], file_pa
                 f.write("[?]:\n")
             f.write(message.content.strip()+"\n\n")
         f.write("="*40+"\n")
+
+def serialize_messages(messages: List[Union[AIMessage, HumanMessage]]) -> List[dict]:
+    """
+    Serializa una lista de mensajes en un formato JSON serializable.
+
+    Args:
+        messages (List[Union[AIMessage, HumanMessage]]): Lista de mensajes a serializar.
+
+    Returns:
+        List[dict]: Lista de mensajes serializados como diccionarios.
+    """
+    return [
+        {
+            "sender_type": "AIMessage" if isinstance(message, AIMessage) else "HumanMessage",
+            "message": message.content
+        }
+        for message in messages
+    ]

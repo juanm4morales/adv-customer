@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulación de Conversación</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>Simulación de Conversación</h1>
+
+    <!-- Formulario inicial para ingresar Bot ID y Agent ID -->
+    <div id="initial-form-container">
+        <form id="initial-form">
+            <label for="bot-id">ID del Bot:</label>
+            <input type="text" id="bot-id" name="bot_id" required>
+
+            <label for="agent-id">ID del Agente:</label>
+            <input type="text" id="agent-id" name="agent_id" required>
+
+            <button type="submit">Obtener Atributos</button>
+        </form>
+    </div>
+
+    <!-- Contenedor para el formulario dinámico -->
+    <div id="dynamic-form-container" style="display: none;"></div>
+
+    <!-- Contenedor para el chat -->
+    <div id="chat-container" style="display: none; border: 1px solid #ccc; padding: 10px; max-width: 600px; margin: 20px auto; background-color: #fff; border-radius: 5px;">
+        <div id="chat-messages" style="max-height: 400px; overflow-y: auto;">
+            <!-- Los mensajes del chat se renderizarán aquí -->
+        </div>
+    </div>
+
+    <!-- Contenedor para mostrar el resultado -->
+    <div id="result-container"></div>
+
+    <script src="/static/js/scripts.js"></script>
+</body>
+</html>

@@ -1,11 +1,15 @@
+build/
+conversations/
 venv/
 .venv/
 .env
+.flaskenv
 
 .vscode/
 
 __pycache__/
 *.pyc
 
-# Archivos de logs
 *.log
+
+*.egg-info
