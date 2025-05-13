@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultContainer = document.getElementById('result-container');
     const chatContainer = document.getElementById('chat-container');
     const chatMessages = document.getElementById('chat-messages');
+    const botSelect = document.getElementById('bot-id');
+    const agentSelect = document.getElementById('agent-id');
 
     let botId = null;
     let agentId = null;
@@ -30,11 +32,80 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = conversationPageUrl;
     };
 
+    // Verificar si ya se cargaron los bots en el almacenamiento local
+    const cachedBots = localStorage.getItem('bots');
+    if (cachedBots) {
+        JSON.parse(cachedBots).forEach(bot => {
+            const option = document.createElement('option');
+            option.value = bot.id;
+            option.textContent = bot.name;
+            botSelect.appendChild(option);
+        });
+    } else {
+        // Obtener la lista de bots desde el backend
+        fetch('/get-bots', {
+            method: 'GET',
+            headers: {
+                'accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(bots => {
+            localStorage.setItem('bots', JSON.stringify(bots));
+            bots.forEach(bot => {
+                const option = document.createElement('option');
+                option.value = bot.id;
+                option.textContent = bot.name;
+                botSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error al obtener la lista de bots:', error);
+        });
+    }
+
+    // Reemplazar el evento 'change' nativo con el evento de Select2
+    $('#bot-id').on('select2:select', (event) => {
+        const botId = event.params.data.id;
+
+        // Limpiar el select de agentes
+        agentSelect.innerHTML = '<option value="" disabled selected>Selecciona un agente</option>';
+
+        // Obtener la lista de agentes para el bot seleccionado
+        fetch(`/api/get-agents/${botId}`, {
+            method: 'GET',
+            headers: {
+                'accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error en la respuesta del servidor: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(agents => {
+            if (!Array.isArray(agents)) {
+                throw new Error('La respuesta del servidor no contiene una lista de agentes válida.');
+            }
+
+            agents.forEach(agent => {
+                const option = document.createElement('option');
+                option.value = agent.id;
+                option.textContent = agent.name;
+                agentSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error al obtener la lista de agentes:', error);
+        });
+    });
+
     // Manejar el envío del formulario inicial
     initialForm.addEventListener('submit', (event) => {
         event.preventDefault();
 
-        botId = document.getElementById('bot-id').value;
+        botId = botSelect.value;
         agentId = document.getElementById('agent-id').value;
 
         const initialSubmitButton = initialForm.querySelector('button[type="submit"]');
@@ -129,6 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatMessages = document.getElementById('chat-messages');
     const backToHomeButton = document.getElementById('back-to-home');
     const backToFormButton = document.getElementById('back-to-form');
+    const exportChatButton = document.getElementById('export-chat');
+    const chatMessagesContainer = document.getElementById('chat-messages');
 
     if (chatMessages) {
         const messages = JSON.parse(sessionStorage.getItem('conversationMessages')) || [];
@@ -147,6 +220,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (backToFormButton) {
         backToFormButton.addEventListener('click', () => {
             window.history.back();
+        });
+    }
+
+    if (exportChatButton) {
+        exportChatButton.addEventListener('click', () => {
+            const messages = Array.from(chatMessagesContainer.children).map(messageElement => messageElement.textContent);
+            const chatContent = messages.join('\n\n');
+
+            const blob = new Blob([chatContent], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'conversacion.txt';
+            link.click();
         });
     }
 });

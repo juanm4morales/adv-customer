@@ -112,4 +112,4 @@ def should_continue(state: State, max_messages_size: int = 30):
         return "end"
     
     # Otherwise we can just end
-    return CHATBOT_NODE
+    return CUSTOMER_NODE

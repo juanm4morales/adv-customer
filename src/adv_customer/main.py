@@ -1,5 +1,5 @@
 import argparse
-from adv_customer.customer_sim import ConversationSim
+from adv_customer.conversation_sim import ConversationSim
 import adv_customer.utils.bot_utils as bot_utils
 
 def customer_info_creation(customer_attributes):

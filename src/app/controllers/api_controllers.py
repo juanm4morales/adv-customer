@@ -1,5 +1,5 @@
 from adv_customer.utils.bot_utils import fetch_bot_info, generate_customer_attr_names
-from adv_customer.customer_sim import ConversationSim
+from adv_customer.conversation_sim import ConversationSim
 from threading import Lock
 import uuid
 
@@ -81,3 +81,18 @@ def generate_conversation_controller(data, user_id):
         return {"error": str(e)}, 500
     finally:
         set_request_active(user_id, False)
+
+def get_agents_controller(bot_id):
+    """Obtener la lista de agentes específicos de un bot.
+
+    Args:
+        bot_id (int): El ID del bot.
+
+    Returns:
+        list: Una lista de diccionarios con los agentes (id y name).
+    """
+    try:
+        agents = fetch_bot_info(bot_id)
+        return [{"id": agent["id"], "name": agent["name"] } for agent in agents]
+    except Exception as e:
+        raise RuntimeError(f"Error al obtener agentes para el bot {bot_id}: {e}")

@@ -30,7 +30,7 @@ Ahora, sigue rigurosamente el siguiente razonamiento paso a paso (Chain-of-Thoug
    - Considera exclusivamente atributos que serían válidos incluso si el bot no tuviera reglas específicas ni lógica interna detallada.
 
 Caso específico para bots de asistencia en ventas de productos:
-- El atributo 'producto_deseado' es el único permitido para capturar la intención de compra.
+- El atributo 'producto deseado' es el único permitido para capturar la intención de compra.
 - Cualquier especificación técnica o característica del producto NUNCA debe extraerse como atributo separado.
 """
 

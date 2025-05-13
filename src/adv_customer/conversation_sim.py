@@ -114,8 +114,9 @@ class ConversationSim:
         builder.add_node(ChatbotNode.name, ChatbotNode(self.bot_id))
         # Edges
         builder.add_edge(START, CustomerNode.name)
-        builder.add_conditional_edges(CustomerNode.name, lambda state: should_continue(state, self.max_messages))
-        builder.add_edge(ChatbotNode.name, CustomerNode.name)
+        builder.add_edge(CustomerNode.name, ChatbotNode.name)
+        builder.add_conditional_edges(ChatbotNode.name, lambda state: should_continue(state, self.max_messages))
+        
         checkpointer = InMemorySaver()
         graph = builder.compile(checkpointer=checkpointer)
         return graph
@@ -139,12 +140,12 @@ class ConversationSim:
             print("Iniciando simulación de CustomerSim...\n")
             for chunk in self.graph.stream(initial_state, self.config_checkpoint, stream_mode="values"):
                 if chunk.get("closed"):
-                    print("Fin de la conversación.")
+                    print(chunk["messages"][-1])
                     state = chunk
-                    break
                 if chunk.get("messages"):  # Check if the list is not empty
                     last_message = chunk["messages"][-1]
                     last_message.pretty_print()
+            print("Fin de la conversación.")
         else:
             state = self.graph.invoke(initial_state, self.config_checkpoint)
         return serialize_messages(state["messages"])
