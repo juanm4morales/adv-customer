@@ -7,10 +7,13 @@
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <h1>Simulación de Conversación</h1>
+    <header style="text-align:center; padding: 2rem;">
+        <h1 style="font-size: 2.5rem;">🧠 Simulación de Conversación Inteligente</h1>
+        <p style="color: #666;">Adversarial Agent</p>
+    </header>
 
     <!-- Formulario inicial para ingresar Bot ID y Agent ID -->
-    <div id="initial-form-container">
+    <div id="initial-form-container" class="form-container">
         <form id="initial-form">
             <label for="bot-id">ID del Bot:</label>
             <input type="text" id="bot-id" name="bot_id" required>
@@ -23,17 +26,17 @@
     </div>
 
     <!-- Contenedor para el formulario dinámico -->
-    <div id="dynamic-form-container" style="display: none;"></div>
+    <div id="dynamic-form-container" class="form-container hidden"></div>
 
     <!-- Contenedor para el chat -->
-    <div id="chat-container" style="display: none; border: 1px solid #ccc; padding: 10px; max-width: 600px; margin: 20px auto; background-color: #fff; border-radius: 5px;">
-        <div id="chat-messages" style="max-height: 400px; overflow-y: auto;">
+    <div id="chat-container" class="chat-container hidden">
+        <div id="chat-messages" class="chat-messages">
             <!-- Los mensajes del chat se renderizarán aquí -->
         </div>
     </div>
 
     <!-- Contenedor para mostrar el resultado -->
-    <div id="result-container"></div>
+    <div id="result-container" class="result-container"></div>
 
     <script src="/static/js/scripts.js"></script>
 </body>

@@ -2,9 +2,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const initialForm = document.getElementById('initial-form');
     const dynamicFormContainer = document.getElementById('dynamic-form-container');
     const resultContainer = document.getElementById('result-container');
+    const chatContainer = document.getElementById('chat-container');
+    const chatMessages = document.getElementById('chat-messages');
 
     let botId = null;
     let agentId = null;
+
+    const toggleVisibility = (element, show) => {
+        element.classList.toggle('hidden', !show);
+    };
+
+    // Asegurar que createMessageElement esté disponible globalmente
+    window.createMessageElement = (message, senderType) => {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+        messageElement.classList.add(senderType === 'AIMessage' ? 'message-ai' : 'message-human');
+        messageElement.textContent = senderType === 'AIMessage' 
+            ? `Cliente: ${message}` 
+            : `Asistente: ${message}`;
+        return messageElement;
+    };
+
+    // Redirigir a la página de conversación generada
+    const redirectToConversationPage = (messages) => {
+        const conversationPageUrl = '/conversation';
+        sessionStorage.setItem('conversationMessages', JSON.stringify(messages));
+        window.location.href = conversationPageUrl;
+    };
 
     // Manejar el envío del formulario inicial
     initialForm.addEventListener('submit', (event) => {
@@ -14,27 +38,23 @@ document.addEventListener('DOMContentLoaded', () => {
         agentId = document.getElementById('agent-id').value;
 
         const initialSubmitButton = initialForm.querySelector('button[type="submit"]');
-        initialSubmitButton.disabled = true; // Deshabilitar el botón
+        initialSubmitButton.disabled = true;
 
         fetch('/api/get-customer-attributes', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ bot_id: botId, agent_id: agentId })
         })
         .then(response => response.json())
         .then(data => {
-            initialSubmitButton.disabled = false; // Habilitar el botón nuevamente
+            initialSubmitButton.disabled = false;
 
             if (!data || !Array.isArray(data.attributes)) {
                 throw new Error('La respuesta de la API no contiene atributos válidos.');
             }
 
-            // Ocultar el formulario inicial
-            initialForm.style.display = 'none';
+            toggleVisibility(initialForm, false);
 
-            // Generar el formulario dinámico
             const dynamicForm = document.createElement('form');
             dynamicForm.id = 'dynamic-form';
 
@@ -59,9 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
             dynamicForm.appendChild(dynamicSubmitButton);
 
             dynamicFormContainer.appendChild(dynamicForm);
-            dynamicFormContainer.style.display = 'block';
+            toggleVisibility(dynamicFormContainer, true);
 
-            // Manejar el envío del formulario dinámico
             dynamicForm.addEventListener('submit', (event) => {
                 event.preventDefault();
 
@@ -74,63 +93,60 @@ document.addEventListener('DOMContentLoaded', () => {
                 const payload = {
                     bot_id: botId,
                     agent_id: agentId,
-                    chat_id: Date.now().toString(), // Generar un chat_id único
+                    chat_id: Date.now().toString(),
                     customer_info: customerInfo
                 };
 
-                dynamicSubmitButton.disabled = true; // Deshabilitar el botón
+                dynamicSubmitButton.disabled = true;
 
                 fetch('/api/generate-conversation', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 })
                 .then(response => response.json())
                 .then(result => {
-                    dynamicSubmitButton.disabled = false; // Habilitar el botón nuevamente
-
-                    // Mostrar el contenedor del chat
-                    const chatContainer = document.getElementById('chat-container');
-                    const chatMessages = document.getElementById('chat-messages');
-                    chatContainer.style.display = 'block';
-
-                    // Limpiar mensajes previos
-                    chatMessages.innerHTML = '';
-
-                    // Renderizar los mensajes del chat
-                    result.messages.forEach(message => {
-                        const messageElement = document.createElement('div');
-                        messageElement.style.marginBottom = '10px';
-                        messageElement.style.padding = '10px';
-                        messageElement.style.borderRadius = '5px';
-                        messageElement.style.maxWidth = '80%';
-
-                        if (message.sender_type === 'AIMessage') {
-                            messageElement.style.backgroundColor = '#e0f7fa';
-                            messageElement.style.alignSelf = 'flex-start';
-                            messageElement.textContent = `Cliente: ${message.message}`;
-                        } else if (message.sender_type === 'HumanMessage') {
-                            messageElement.style.backgroundColor = '#f1f8e9';
-                            messageElement.style.alignSelf = 'flex-end';
-                            messageElement.textContent = `Asistente: ${message.message}`;
-                        }
-
-                        chatMessages.appendChild(messageElement);
-                    });
+                    dynamicSubmitButton.disabled = false;
+                    redirectToConversationPage(result.messages);
                 })
                 .catch(error => {
-                    dynamicSubmitButton.disabled = false; // Habilitar el botón nuevamente
+                    dynamicSubmitButton.disabled = false;
                     console.error('Error:', error);
                     resultContainer.textContent = 'Ocurrió un error al generar la conversación.';
                 });
             });
         })
         .catch(error => {
-            initialSubmitButton.disabled = false; // Habilitar el botón nuevamente
+            initialSubmitButton.disabled = false;
             console.error('Error:', error);
             resultContainer.textContent = 'Ocurrió un error al obtener los atributos.';
         });
     });
+});
+
+// Manejar la navegación en la página de conversación
+document.addEventListener('DOMContentLoaded', () => {
+    const chatMessages = document.getElementById('chat-messages');
+    const backToHomeButton = document.getElementById('back-to-home');
+    const backToFormButton = document.getElementById('back-to-form');
+
+    if (chatMessages) {
+        const messages = JSON.parse(sessionStorage.getItem('conversationMessages')) || [];
+        messages.forEach(message => {
+            const messageElement = window.createMessageElement(message.message, message.sender_type);
+            chatMessages.appendChild(messageElement);
+        });
+    }
+
+    if (backToHomeButton) {
+        backToHomeButton.addEventListener('click', () => {
+            window.location.href = '/';
+        });
+    }
+
+    if (backToFormButton) {
+        backToFormButton.addEventListener('click', () => {
+            window.history.back();
+        });
+    }
 });

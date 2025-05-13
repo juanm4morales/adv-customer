@@ -1,5 +1,5 @@
 import random
-from .prompts import customer_attributes
+from adv_customer.prompts import customer_attributes
 
 def filter_prompt_variables(prompt_template, variables: dict):
     """ 

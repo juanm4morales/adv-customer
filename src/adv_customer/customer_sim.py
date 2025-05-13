@@ -8,7 +8,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from .states import State
 from .nodes import CustomerNode, ChatbotNode, should_continue
 
-import adv_customer.utils.prompts as prompts
+import adv_customer.prompts as prompts
 from .schemes import ResponseFormatter
 from adv_customer.utils.prompt_utils import filter_prompt_variables, generate_random_customer_profile
 from adv_customer.utils.serializer import persist_conversation, serialize_messages
@@ -65,7 +65,7 @@ class ConversationSim:
         """
         Generate the prompt for the customer agent based on the bot's capabilities and the customer's profile.
         """
-        system_prompt_template = prompts.CUSTOMER_SIM_PROMPT_3
+        system_prompt_template = prompts.CUSTOMER_SIM_PROMPT_2
         prompt_template = ChatPromptTemplate.from_messages(
             [
                 ("system", system_prompt_template),
