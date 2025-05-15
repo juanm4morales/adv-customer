@@ -1,4 +1,4 @@
-from adv_customer.utils.bot_utils import fetch_bot_info, generate_customer_attr_names
+from adv_customer.conversation_setup import fetch_bot_info, generate_customer_attr_names
 from adv_customer.conversation_sim import ConversationSim
 from threading import Lock
 import uuid
@@ -7,12 +7,24 @@ active_requests = {}
 lock = Lock()
 
 def is_request_active(user_id):
-    """Check if a request is currently active for the given user_id."""
+    """Check if a request is currently active for the given user_id.
+
+    Args:
+        user_id (str): The ID of the user.
+
+    Returns:
+        bool: True if the request is active, False otherwise.
+    """
     with lock:
         return active_requests.get(user_id, False)
 
 def set_request_active(user_id, active):
-    """Set the request status for the given user_id."""
+    """Set the request status for the given user_id.
+
+    Args:
+        user_id (str): The ID of the user.
+        active (bool): True if the request is active, False otherwise.
+    """
     with lock:
         active_requests[user_id] = active
 
@@ -36,7 +48,7 @@ def get_customer_attributes_controller(data):
     if not agent_info:
         return {"error": "Agente no encontrado"}, 404
 
-    attributes = generate_customer_attr_names(agent_info["prompt_agent"]["prompt"])
+    attributes = generate_customer_attr_names(agent_info["role"], agent_info["prompt_agent"]["prompt"])
     return attributes
 
 def generate_conversation_controller(data, user_id):
@@ -70,29 +82,31 @@ def generate_conversation_controller(data, user_id):
         if not agent_info:
             return {"error": "Agente no encontrado"}, 404
         
-        customerSim = ConversationSim(
+        conversation_sim = ConversationSim(
             customer_id=str(uuid.uuid4()),
             customer_info=customer_info,
             agent_info=agent_info,
         )
-        messages = customerSim.simulate_conversation(verbose=True)
-        return messages
+        messages = conversation_sim.simulate_conversation(verbose=True)
+        customer_profile = conversation_sim.customer_profile
+        return messages, customer_profile
     except Exception as e:
         return {"error": str(e)}, 500
     finally:
         set_request_active(user_id, False)
 
+
 def get_agents_controller(bot_id):
-    """Obtener la lista de agentes específicos de un bot.
+    """Get the agents for the given bot_id.
 
     Args:
-        bot_id (int): El ID del bot.
+        bot_id (int): The ID of the bot.
 
     Returns:
-        list: Una lista de diccionarios con los agentes (id y name).
+        list: A list of dictionaries with the agents (id and name).
     """
     try:
         agents = fetch_bot_info(bot_id)
-        return [{"id": agent["id"], "name": agent["name"] } for agent in agents]
+        return [{"id": agent["id"], "name": f"{agent["name"]} ({agent['id']})"} for agent in agents]
     except Exception as e:
         raise RuntimeError(f"Error al obtener agentes para el bot {bot_id}: {e}")

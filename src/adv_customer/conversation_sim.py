@@ -29,7 +29,7 @@ class ConversationSim:
             self.agent_id = agent_info["id"]
             self.bot_id = agent_info["bot_id"]
             agent_role = agent_info["role"]
-            agent_prompt = agent_info["prompt_agent"]["prompt"]
+            # agent_prompt = agent_info["prompt_agent"]["prompt"]
         except KeyError as e:
             raise KeyError(f"Missing expected key in agent_info: {e}") from e
         self.customer_info = customer_info
@@ -37,29 +37,6 @@ class ConversationSim:
         self.max_messages = max_messages
         self.graph = self._graph_builder()
         self.config_checkpoint = {"configurable": {"thread_id": "1"}}
-
-    def _select_agent(self):
-        """
-        List available agents from self.agents_info and allow the user to select one by ID.
-        """
-        if not self.agents_info:
-            raise ValueError("No agents available for selection.")
-        
-        print("\n╔═══════════════════════╗")
-        print("║  Agentes disponibles  ║")
-        print("╚═══════════════════════╝")
-        for agent_id, agent in self.agents_info.items():
-            print(f" - [ ID {agent_id} ] {agent['role']} ")
-
-        while True:
-            try:
-                choice = int(input("Selecciona el ID del agente: "))
-                if choice in self.agents_info:
-                    return choice
-                else:
-                    print("Selección inválida. Por favor ingrese un ID válido.")
-            except ValueError:
-                print("Entrada inválida. Por favor intente nuevamente.")
 
     def _generate_prompt(self, agent_role: str):
         """
@@ -80,25 +57,6 @@ class ConversationSim:
         variables = filter_prompt_variables(prompt_template, variables)
         prompt = prompt_template.partial(**variables)
         return prompt
-    
-    def swap_agent(self, new_agent_id: str):
-        """
-        Swap the current agent with a new one.
-        This method allows changing the agent during the simulation.
-        It updates the current agent ID and rebuilds the state graph with the new agent's prompt.
-
-        Args:
-            new_agent_id (str): The ID of the new agent to swap in.
-
-        Raises:
-            ValueError: If the new_agent_id does not exist in agents_info.
-        """
-        if new_agent_id not in self.agents_info:
-            raise ValueError(f"El agente con ID {new_agent_id} no existe.")
-        
-        self.current_agent_id = new_agent_id
-        self.customer_prompt = self._generate_prompt()
-        self.graph = self._graph_builder()
     
     def _graph_builder(self):
         """

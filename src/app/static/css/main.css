@@ -1,0 +1,9 @@
+/**
+ * main.css
+ * Archivo principal que importa los demás archivos CSS
+ */
+
+/* Importación de archivos CSS */
+@import 'base.css';
+@import 'components.css';
+@import 'layout.css';

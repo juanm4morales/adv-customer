@@ -1,0 +1,274 @@
+/**
+ * components.css
+ * Contiene todos los componentes reutilizables de la interfaz
+ */
+
+/* Botones y controles de formulario */
+button, 
+input, 
+select {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition);
+}
+
+input, 
+select {
+    background-color: var(--card-background);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    color: var(--text-color);
+}
+
+input:focus, 
+select:focus {
+    border-color: var(--accent-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    background-color: #6366F1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button:disabled {
+    background-color: var(--disabled-bg);
+    color: var(--disabled-text);
+    cursor: not-allowed;
+    transform: none;
+}
+
+label {
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    margin-bottom: -0.5rem;
+}
+
+/* Botones de navegación */
+.navigation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 2rem auto;
+    max-width: 900px;
+    padding: 0 1rem;
+}
+
+.navigation-buttons button {
+    background-color: white;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    padding: 0.875rem 1.75rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.navigation-buttons button:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
+}
+
+.navigation-buttons button:active {
+    transform: translateY(0);
+}
+
+/* Botón especial de exportar */
+.navigation-buttons button#export-chat {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+.navigation-buttons button#export-chat:hover {
+    background-color: #D946EF;
+    border-color: #D946EF;
+    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.3);
+}
+
+/* Iconos para los botones */
+.navigation-buttons button::before {
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+    vertical-align: middle;
+}
+
+#back-to-home::before {
+    content: '🏠';
+}
+
+#back-to-form::before {
+    content: '⬅️';
+}
+
+#export-chat::before {
+    content: '💾';
+}
+
+/* Header principal */
+header {
+    background: var(--gradient);
+    color: white;
+    padding: 2.5rem 1rem;
+    text-align: center;
+    box-shadow: var(--shadow-medium);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: white;
+}
+
+header p {
+    font-size: 1.1rem;
+    margin: 0 0 1.5rem 0;
+    opacity: 0.9;
+    color: white;
+}
+
+header a {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+header a:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Tarjeta base */
+.card {
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
+}
+
+/* Select2 personalización */
+.select2-container--default .select2-selection--single {
+    border: 1.5px solid var(--border-color);
+    border-radius: 8px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    background-color: white;
+}
+
+.select2-container--default .select2-selection--single:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--text-color);
+    padding-left: 1rem;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 42px;
+}
+
+.select2-dropdown {
+    border: 1.5px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow-medium);
+    background-color: white;
+}
+
+.select2-results__option {
+    padding: 8px 16px;
+    color: var(--text-color);
+}
+
+.select2-results__option--highlighted[aria-selected] {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.select2-results__option[aria-selected=true] {
+    background-color: #F3F4F6;
+}
+
+.select2-search--dropdown .select2-search__field {
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px;
+    color: var(--text-color);
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* Sistema de carga */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading-text {
+    color: var(--text-color);
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+.loading-dots {
+    display: inline-block;
+    width: 20px;
+    text-align: left;
+}
+
+.loading-dots::after {
+    content: '.';
+    animation: dots 1.5s steps(4, end) infinite;
+}
+
+.loading {
+    animation: pulse 1.5s infinite;
+}

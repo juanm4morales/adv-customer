@@ -31,13 +31,13 @@ def fetch_bot_info(bot_id: str):
         raise RuntimeError(f"Request error: {request_error}") from request_error
     except ValueError as value_error:
         raise RuntimeError(f"Error processing the response: {value_error}") from value_error
-
-def generate_customer_attr_names(agent_prompt: str):
+    
+def generate_customer_attr_names(agent_role: str, agent_prompt: str):
     """
     Generate customer attribute names based on the agent's prompt.
     """
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, max_tokens=1000)
-    prompt = prompts.CUSTOMER_INFO_PROMPT_2.format(BOT_AGENT_PROMPT=agent_prompt)
+    prompt = prompts.CUSTOMER_INFO_PROMPT.format(BOT_AGENT_ROLE=agent_role, BOT_AGENT_PROMPT=agent_prompt)
     attr_names = llm.with_structured_output(CustomerAttributes).invoke(prompt)
 
     if hasattr(attr_names, "attributes"):

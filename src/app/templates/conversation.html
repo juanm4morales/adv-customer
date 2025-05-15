@@ -3,24 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conversación Generada</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
+    <title>Conversación Generada - Klari Testing Platform</title>
+    <link rel="stylesheet" href="/static/css/main.css">
 </head>
 <body>
-    <h1>Conversación Generada</h1>
+    <div id="conversation-page"></div>
+        <div class="conversation-header">
+            <h1>Conversación Generada</h1>
+            <p>Simulación completa de interacción con el cliente</p>
+        </div>
 
-    <div id="chat-container" class="chat-container">
-        <div id="chat-messages" class="chat-messages">
-            <!-- Los mensajes del chat se renderizarán aquí -->
+        <div id="customer-profile" class="customer-profile"></div>
+        
+        <div id="chat-container" class="chat-container">
+            <div class="chat-header">Conversación simulada</div>
+            <div id="chat-messages" class="chat-messages">
+                <!-- Los mensajes del chat se renderizarán aquí -->
+            </div>
+        </div>
+
+        <div class="navigation-buttons">
+            <button id="back-to-home">Volver al Inicio</button>
+            <button id="back-to-form">Volver al Formulario</button>
+            <button id="export-chat">Exportar</button>
         </div>
     </div>
-
-    <div class="navigation-buttons">
-        <button id="back-to-home">Volver al Inicio</button>
-        <button id="back-to-form">Volver al Formulario</button>
-        <button id="export-chat">Exportar</button>
-    </div>
-
-    <script src="/static/js/scripts.js"></script>
+    <script type="module" src="/static/js/main.js"></script>
 </body>
 </html>

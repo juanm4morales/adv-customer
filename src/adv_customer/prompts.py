@@ -1,4 +1,4 @@
-CUSTOMER_INFO_PROMPT_1 = """
+CUSTOMER_INFO_PROMPT_prev = """
     Tu tarea es generar una lista concisa de atributos esenciales que un cliente debe proporcionar para que un bot asistente, descrito en el siguiente prompt, pueda iniciar su función correctamente:
 
     {BOT_AGENT_PROMPT}
@@ -16,23 +16,31 @@ CUSTOMER_INFO_PROMPT_1 = """
     - Si el agente puede iniciar su tarea con solo uno o dos atributos, incluye únicamente esos. No infieras requisitos adicionales no explícitamente necesarios.
 """
 
-CUSTOMER_INFO_PROMPT_2 = """
-Tu tarea es generar una lista concisa de atributos esenciales que un cliente debe proporcionar para que un bot asistente, descrito en el siguiente prompt, pueda iniciar su función correctamente:
+CUSTOMER_INFO_PROMPT="""
+Tu objetivo es generar una lista concisa de atributos mínimos e indispensables que un cliente debe proporcionar mediante un formulario, de modo que un agente {BOT_AGENT_ROLE} pueda ejecutar completamente su función.
 
+Prompt del agente:
 "{BOT_AGENT_PROMPT}"
 
-Ahora, sigue rigurosamente el siguiente razonamiento paso a paso (Chain-of-Thought):
+Sigue rigurosamente este razonamiento paso a paso:
 
-1. Identifica el rol del bot. Por ejemplo: "asistente de ventas para productos de informática"
-2. Identifica únicamente la información mínima que el cliente debe proporcionar para que el bot pueda realizar su tarea. Considera solo lo que un cliente humano podría expresar sin intervención del bot.
-3. Aplica estos filtros estrictos para definir los nombres de atributos:
-   - No incluyas un atributo, por el solo hecho de ser mencionado en un caso específico, reglas condicionales o ejemplos del prompt del agente.
-   - Considera exclusivamente atributos que serían válidos incluso si el bot no tuviera reglas específicas ni lógica interna detallada.
+1. Analiza el rol del agente (por ejemplo: "especialista en ventas de productos”, “soporte técnico”, etc.).
+2. Identifica únicamente la información mínima y esencial que el agente necesita para asistir al cliente. Esta especificado en el Prompt.
+2. Determina la información estrictamente necesaria que un cliente real, al inicio de la conversación, puede conocer y comunicar sin ayuda del bot.
+3. Aplica estos criterios para definir los nombres de atributos (campos de formulario):
+   - Incluye solo datos que un cliente auténtico pueda expresar por sí mismo.
+   - Excluye atributos internos del agente (identificadores, códigos técnicos, datos consultados) y contenido multimedia.
+   - No consideres información o campos mencionados únicamente en ejemplos, reglas condicionales o casos particulares del prompt.
+   - Si varios atributos pueden agruparse en uno más general, conserva solo este.
+   - Los nombres deben ser claros y descriptivos para el cliente.
+4. Redacta la lista final de atributos como nombres de campo, sin descripciones adicionales.
 
-Caso específico para bots de asistencia en ventas de productos:
-- El atributo 'producto deseado' es el único permitido para capturar la intención de compra.
-- Cualquier especificación técnica o característica del producto NUNCA debe extraerse como atributo separado.
+— Regla especial para agentes "especialistas en ventas de productos" (físicos o digitales):
+   - El atributo 'producto deseado' es el único permitido para capturar la intención de compra.
+   - No solicites características técnicas ni otros detalles como campos separados.
+   - Esta regla no aplica a agentes que venden servicios.
 """
+
 
 CUSTOMER_SIM_PROMPT_1 = """
     Eres un cliente diseñado para conversar con un Chatbot. Tu rol es el siguiente:

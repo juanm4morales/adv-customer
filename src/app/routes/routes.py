@@ -42,8 +42,8 @@ def generate_conversation():
     try:
         data = request.get_json()
         user_id = request.remote_addr  # Identificar al usuario por su IP
-        response = api_controllers.generate_conversation_controller(data, user_id)
-        return jsonify({"messages": response})
+        messages, customer_profile = api_controllers.generate_conversation_controller(data, user_id)
+        return jsonify({"messages": messages, "customer_profile": customer_profile})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -78,7 +78,7 @@ def conversation_page():
 
 @bp.route('/get-bots', methods=['GET'])
 def get_bots():
-    """Obtener la lista de bots desde el endpoint externo."""
+    """Get the list of bots from the API."""
     api_key = os.getenv('KLARI_API_KEY')
     if not api_key:
         return jsonify({"error": "API key no configurada"}), 500
@@ -98,7 +98,7 @@ def get_bots():
 
 @bp.route('/api/get-agents/<int:bot_id>', methods=['GET'])
 def get_agents(bot_id):
-    """Obtener la lista de agentes específicos de un bot."""
+    """Get the list of agents for a specific bot."""
     try:
         agents = api_controllers.get_agents_controller(bot_id)
         return jsonify(agents)

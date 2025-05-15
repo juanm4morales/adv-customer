@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 
 setup(
     name="adversarial-bot",
-    version="1.0.0",
+    version="0.1.0",
     description="A project to simulate conversations between customers and chatbots.",
-    author="Juan M4",
+    author="juanm4morales",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     include_package_data=True,
