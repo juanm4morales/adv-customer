@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+instance/
+*.egg-info/
+build/
+dist/
+
+# Environment files
+.env
+.flaskenv
+
+# Docker
+/Dockerfile.bak
+/docker-compose.override.yml
+/docker-compose.yml.bak
+
+# Flask
+instance/
+
+# Logs and data
+conversation/*.txt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# General
+*.log
+*.out

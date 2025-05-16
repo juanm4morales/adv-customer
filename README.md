@@ -6,6 +6,7 @@ This project simulates conversations between a customer and a chatbot to evaluat
 
 - Python 3.8 or higher
 - Required dependencies listed in `requirements.txt`
+- Docker and Docker Compose (optional but recommended)
 
 ## Installation
 
@@ -15,22 +16,55 @@ This project simulates conversations between a customer and a chatbot to evaluat
    cd adversarial-bot
    ```
 
-2. Install the package:
-   ```bash
-   pip install -e .
-   ```
-
-3. Create a `.env` file in the root directory and add the required environment variables:
+2. Create a `.env` file in the root directory and add the required environment variables:
    ```
    KLARI_API_KEY, KLARI_BOT_API_KEY, OPENAI_API_KEY
    ```
 
+3. Install the package (only required for local execution without Docker):
+   ```bash
+   pip install -e .
+   ```
+
 ## Usage
 
-### Run the Web Application
+### Run with Docker Compose (Recommended)
 
-To start the web application:
+The easiest way to run the application is using Docker Compose:
 
+1. Make sure you have Docker and Docker Compose installed on your system.
+
+2. Build and start the container:
+   ```bash
+   docker-compose up --build
+   ```
+
+3. The application will be available at `http://localhost:5000`.
+
+4. To stop the application:
+   ```bash
+   docker-compose down
+   ```
+
+### Run with Docker
+
+You can also run the application using Docker directly:
+
+1. Build the Docker image:
+   ```bash
+   docker build -t adversarial-bot .
+   ```
+
+2. Run the container:
+   ```bash
+   docker run -p 5000:5000 --env-file .env adversarial-bot
+   ```
+
+3. The application will be available at `http://localhost:5000`.
+
+### Run the Web Application Locally
+
+To start the web application without Docker:
 
 1. Set the Flask application entry point. If your application is located in the src directory, create a .flaskenv file at the root of your project with the following content:
 
