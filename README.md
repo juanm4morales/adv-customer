@@ -31,12 +31,20 @@ This project simulates conversations between a customer and a chatbot to evaluat
 
 To start the web application:
 
-1. Run the Flask application:
+
+1. Set the Flask application entry point. If your application is located in the src directory, create a .flaskenv file at the root of your project with the following content:
+
+   ```
+   FLASK_APP=src/app
+   ```
+
+2. Run the Flask application:
+
    ```bash
    flask run
    ```
 
-2. Open your browser and go to `http://127.0.0.1:5000` to access the web interface.
+3. Open your browser and go to `http://127.0.0.1:5000` to access the web interface.
 
 ### Run the Simulation Script
 
@@ -53,14 +61,15 @@ Replace `<bot_id>` with the ID of the chatbot you want to simulate the conversat
 - `src/app`: Contains the web application code.
   - `templates/`: HTML templates for the web interface.
   - `static/`: Static files such as CSS and JavaScript.
-  - `routes/`: API route definitions.
+  - `routes/`: API + web app route definitions.
   - `controllers/`: Logic for handling API requests.
 - `src/adv_customer`: Core logic for simulating conversations.
   - `prompts.py`: Contains the prompt templates for customer simulation.
   - `schemes.py`: Contains schemes for formatted outputs.
-  - `main.py`: Entry point for running the simulation. Requires as argument the {bot_id}.
+  - `main.py`: Entry point for running the simulation in terminal.
   - `states.py`: Contains the state component of a graph (langgraph).
   - `nodes.py`: Contains the nodes and conditional edges of a graph (langgraph).
   - `conversation_sim.py`: Defines the `ConversationSim` class responsible for simulating customer behavior.
   - `conversation_setup.py`: Contains what is necessary to prepare (setup) a conversation simulation. Used in app module.
+  - `utils/`: Contains utilities for prompt creation, serialization and api key retrieval.
 - `conversation/{customer_id}_{bot_id}_{agent_id}.txt`: File containing the conversation of the customer {customer_id} with the bot {bot_id} based on the agent {agent_id}.
