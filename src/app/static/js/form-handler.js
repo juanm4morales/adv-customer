@@ -127,7 +127,7 @@ export const FormHandler = {
         // Crear y mostrar el contenedor de carga
         const loadingContainer = UIComponents.createLoadingContainer(
             'Generando conversación',
-            'Por favor espera un momento...'
+            'Por favor espera un momento'
         );
 
         const dynamicFormContainer = document.getElementById('dynamic-form-container');
