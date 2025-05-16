@@ -17,7 +17,7 @@ This project simulates conversations between a customer and a chatbot to evaluat
 
 2. Install the package:
    ```bash
-   pip install .
+   pip install -e .
    ```
 
 3. Create a `.env` file in the root directory and add the required environment variables:
@@ -61,5 +61,6 @@ Replace `<bot_id>` with the ID of the chatbot you want to simulate the conversat
   - `main.py`: Entry point for running the simulation. Requires as argument the {bot_id}.
   - `states.py`: Contains the state component of a graph (langgraph).
   - `nodes.py`: Contains the nodes and conditional edges of a graph (langgraph).
-  - `customer_sim_agent.py`: Defines the `CustomerSim` class responsible for simulating customer behavior.
+  - `conversation_sim.py`: Defines the `ConversationSim` class responsible for simulating customer behavior.
+  - `conversation_setup.py`: Contains what is necessary to prepare (setup) a conversation simulation. Used in app module.
 - `conversation/{customer_id}_{bot_id}_{agent_id}.txt`: File containing the conversation of the customer {customer_id} with the bot {bot_id} based on the agent {agent_id}.
