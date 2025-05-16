@@ -1,26 +1,22 @@
-import os
 import requests
-from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 import adv_customer.prompts as prompts
+from adv_customer.utils.secret_utils import get_api_key
 from adv_customer.schemes import CustomerAttributes
-
-load_dotenv()
-
-API_KEY = os.getenv("KLARI_API_KEY")
 
 def fetch_bot_info(bot_id: str):
     """
     Fetch bot information from the API.
     This function retrieves the bot's capabilities and related agents information from the API.
     """
-    if not API_KEY:
+    api_key = get_api_key("KLARI_API_KEY")
+    if not api_key:
         raise ValueError("The API key is not set. Please set the 'KLARI_API_KEY' variable in the .env file.")
 
     url = f"https://api.klari.ai/api/v1/external/bots/{bot_id}/agents"
     headers = {
         "accept": "application/json",
-        "X-Api-Key": API_KEY
+        "X-Api-Key": api_key
     }
     try:
         response = requests.get(url, headers=headers)

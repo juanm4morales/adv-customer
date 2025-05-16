@@ -95,7 +95,6 @@ def generate_conversation_controller(data, user_id):
     finally:
         set_request_active(user_id, False)
 
-
 def get_agents_controller(bot_id):
     """Get the agents for the given bot_id.
 

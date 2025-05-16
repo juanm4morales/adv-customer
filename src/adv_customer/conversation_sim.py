@@ -1,5 +1,4 @@
 import os
-from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, StateGraph, START
 from langgraph.checkpoint.memory import InMemorySaver
@@ -12,10 +11,6 @@ import adv_customer.prompts as prompts
 from .schemes import ResponseFormatter
 from adv_customer.utils.prompt_utils import filter_prompt_variables, generate_random_customer_profile
 from adv_customer.utils.serializer import persist_conversation, serialize_messages
-
-load_dotenv()
-
-API_KEY = os.getenv("KLARI_API_KEY")
 
 class ConversationSim:
     """ 

@@ -2,10 +2,11 @@ from langchain_core.runnables import Runnable
 from langchain_core.messages import AIMessage, HumanMessage
 from .states import State
 import requests
-import os
+from adv_customer.utils.secret_utils import get_api_key
 
 CUSTOMER_NODE = "customer_node"
 CHATBOT_NODE = "chatbot_node"
+KLARI_BOT_API_KEY = "KLARI_BOT_API_KEY"
 
 class CustomerNode:
     """
@@ -34,16 +35,16 @@ class ChatbotNode:
     name = CHATBOT_NODE
     def __init__(self, bot_id: int):
         self.bot_id = bot_id
-        # Read API key from environment variable
+        # Get API key
         try:
-            self.api_key = os.environ["KLARI_BOT_API_KEY"]
+            api_key = get_api_key(KLARI_BOT_API_KEY)
         except KeyError:
             raise EnvironmentError("Environment variable 'KLARI_BOT_API_KEY' not set")
 
         self.base_url = "https://organization.klari.ai/api/v1/external"
         self.headers = {
             "accept": "application/json",
-            "X-Api-Key": self.api_key,
+            "X-Api-Key": api_key,
             "Content-Type": "application/json",
         }
         self.chat_id = self._create_chat()
